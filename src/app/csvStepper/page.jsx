@@ -6,29 +6,31 @@ import CsvDownload from '../csvDownload/page';
 import  styles from './page.module.css'
 
 export default function Page() {
-  const [currentStep, setCurrentStep] = useState('A');
+  const [currentStep, setCurrentStep] = useState('csvImport');
   const [importedData, setImportedData] = useState(null);
   const [mapperData, setMapperData] = useState(null);
   const [error, setError] = useState('');
+ // const [currentPage, setCurrentPage] = useState('import');
 
   const handleNext = () => {
-    if (currentStep === 'A') {
+    if (currentStep === 'csvImport') {
       // Check if data has been imported
       if (importedData) {
-        setCurrentStep('B');
+        setCurrentStep('csvPage');
       } else {
         setError('Please import data before proceeding.');
       }
-    } else if (currentStep === 'B') {
-      setCurrentStep('C');
+    } else if (currentStep === 'csvPage') {
+      setCurrentStep('csvDownload');
     }
   };
 
   const handlePrevious = () => {
-    if (currentStep === 'B') {
-      setCurrentStep('A');
-    } else if (currentStep === 'C') {
-      setCurrentStep('B');
+    if (currentStep === 'csvPage') {
+      setImportedData(null);
+      setCurrentStep('csvImport');
+    } else if (currentStep === 'csvDownload') {
+      setCurrentStep('csvPage');
     }
   };
 
@@ -46,6 +48,7 @@ export default function Page() {
     // Data received from CsvImporter
     console.log('Data received from mapper:', data);
     setMapperData(data);
+    setImportedData(data);
     // Reset the error message
     setError('');
   };
@@ -53,19 +56,19 @@ export default function Page() {
   return (
     <>
       <div>
-        {currentStep === 'A' && (
+        {currentStep === 'csvImport' && (
           <>
             <CsvImporter sendDataToPage={receiveDataFromImporter} />
             {error && <p className="error-message">{error}</p>}
           </>
         )}
-        {currentStep === 'B' && <CsvPage sendDataToDownload = {receiveDataFromMapper} csvData={importedData}  />}
-        {currentStep === 'C' && <CsvDownload downloadData = {mapperData} />}
+        {currentStep === 'csvPage' && <CsvPage sendDataToDownload = {receiveDataFromMapper} csvData={importedData}  />}
+        {currentStep === 'csvDownload' && <CsvDownload downloadData = {mapperData} />}
         <div className="button-container">
-          <button className={styles["button"]} onClick={handlePrevious} disabled={currentStep === 'A'} >
+          <button className={styles["button"]} onClick={handlePrevious} disabled={currentStep === 'csvImport'} >
             Previous
           </button>
-          <button className={styles["button"]} onClick={handleNext} disabled={currentStep === 'C'} >
+          <button className={styles["button"]} onClick={handleNext} disabled={currentStep === 'csvDownload'} >
             Next
           </button>
         </div>
