@@ -9,6 +9,9 @@ function Sidebar() {
       <li>
         <Link href="/policy">Policy</Link>
       </li>
+      <li>
+        <Link href="/csvStepper">Csv Mapping</Link>
+      </li>
     </ul>
   )
 }
