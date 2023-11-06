@@ -1,6 +1,5 @@
 "use client"
 import React from "react";
-import Image from "next/image";
 
 function Header() {
   const select = (el, all = false) => {
@@ -30,7 +29,7 @@ function Header() {
     <header id="header" className="header fixed-top d-flex align-items-center">
       <div className="d-flex align-items-center justify-content-between">
         <a href="/" className="logo d-flex align-items-center">
-          <Image src={'/assets/img/logo.png'} alt="logo" height={26} width={26}/>
+        <img src="/assets/img/logo.png" alt="logo"/>
           <span className="d-none d-lg-block">Dynamic Render</span>
         </a>
         <i className="bi bi-list toggle-sidebar-btn" onClick={toggle}></i>
@@ -63,7 +62,7 @@ function Header() {
           {/* Profile */}
           <li className="nav-item dropdown pe-3">
           <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <Image src={"/assets/img/profile-img.jpg"} alt="Profile" className="rounded-circle"  height={26} width={26}/>
+            <img src="/assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" />
             <span className="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
           </a>
           </li>
