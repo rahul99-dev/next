@@ -54,9 +54,41 @@ export default function Page() {
   };
 
   return (
-    <>
-      <div>
-        {currentStep === 'csvImport' && (
+    <><div className="pagetitle">
+    <h1>Dashboard</h1>
+    <nav>
+      <ol className="breadcrumb">
+        <li className="breadcrumb-item"><a href="/">Home</a></li>
+        <li className="breadcrumb-item active">CSV Mapping</li>
+      </ol>
+    </nav>
+  </div>
+  <section className="section dashboard">
+      <div className="row">
+      <div className="container slider-one-active">
+  <div className="steps">
+    <div className="step step-one">
+      <div className="liner"></div>
+      <span>Upload CSV!</span>
+    </div>
+    <div className="step step-two">
+      <div className="liner"></div>
+      <span>Step-2!</span>
+    </div>
+    <div className="step step-three">
+      <div className="liner"></div>
+      <span>Step-3!</span>
+    </div>
+  </div>
+  <div className="line">
+    <div className="dot-move"></div>
+    <div className="dot zero"></div>
+    <div className="dot center"></div>
+    <div className="dot full"></div>
+  </div>
+  <div className="slider-ctr">
+    <div className="slider">
+      <div className="slider-form slider-one"> {currentStep === 'csvImport' && (
           <>
             <CsvImporter sendDataToPage={receiveDataFromImporter} />
             {error && <p className="error-message">{error}</p>}
@@ -64,15 +96,20 @@ export default function Page() {
         )}
         {currentStep === 'csvPage' && <CsvPage sendDataToDownload = {receiveDataFromMapper} csvData={importedData}  />}
         {currentStep === 'csvDownload' && <CsvDownload downloadData = {mapperData} />}
-        <div className="button-container">
-          <button className={styles["button"]} onClick={handlePrevious} disabled={currentStep === 'csvImport'} >
+        <div className="slider-form button-container">
+          {currentStep != 'csvImport' &&<button className={styles["button"]} onClick={handlePrevious} disabled={currentStep === 'csvImport'} >
             Previous
-          </button>
-          <button className={styles["button"]} onClick={handleNext} disabled={currentStep === 'csvDownload'} >
+          </button>}
+          {currentStep != 'csvDownload' &&<button className={styles["button"]} onClick={handleNext} disabled={currentStep === 'csvDownload'} >
             Next
-          </button>
-        </div>
-      </div>
+          </button>}
+        </div></div>      
+    </div>
+  </div>
+</div>
+       
+      </div>     
+</section>
     </>
   );
 }
