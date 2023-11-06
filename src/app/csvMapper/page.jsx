@@ -165,13 +165,13 @@ const csvfilterGroupB = csvData.groupB.filter((value) => value !== "");
     <DndProvider backend={HTML5Backend}>
       <div className="wrapper">
       <div className={styles["list-container"]}>
-        <div className={styles["listbox1"]}>
+        <div className={styles["listbox"]}>
           <h4>Group A</h4>
           {groupA.map((item, index) => (
             <DraggableItem key={item} item={item} index={index} moveItem={moveItem} columnIndex={0} />
           ))}
         </div>
-        <div className={styles["listbox2"]}>
+        <div className={styles["listbox"]}>
           <h4>Group B</h4>
           {groupB.map((item, index) => (
             <DraggableItem key={item} item={item} index={index} moveItem={moveItem} columnIndex={1} />
