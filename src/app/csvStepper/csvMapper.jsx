@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Papa from 'papaparse';
-import styles from './page.module.css'
+import styles from './csvMapper.module.css'
 
 const ItemType = 'ITEM';
 
