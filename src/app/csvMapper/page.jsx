@@ -163,28 +163,37 @@ const csvfilterGroupB = csvData.groupB.filter((value) => value !== "");
   return (
     <>
     <DndProvider backend={HTML5Backend}>
-      <div className="wrapper">
-      <div className={styles["list-container"]}>
-        <div className={styles["listbox1"]}>
-          <h4>Group A</h4>
-          {groupA.map((item, index) => (
-            <DraggableItem key={item} item={item} index={index} moveItem={moveItem} columnIndex={0} />
-          ))}
-        </div>
-        <div className={styles["listbox2"]}>
-          <h4>Group B</h4>
-          {groupB.map((item, index) => (
-            <DraggableItem key={item} item={item} index={index} moveItem={moveItem} columnIndex={1} />
-          ))}
-        </div>
-      </div>
-      </div>
+  <div className="wrapper">
+    <table className={styles["table-container"]}>
+      <thead>
+        <tr>
+          <th>Group A</th>
+          <th>Group B</th>
+        </tr>
+      </thead>
+      <tbody>
+        {groupA.map((item, index) => (
+          <tr key={item}>
+            <td>
+              <DraggableItem item={item} index={index} moveItem={moveItem} columnIndex={0} />
+            </td>
+            <td>
+              <DraggableItem item={groupB[index]} index={index} moveItem={moveItem} columnIndex={1} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</DndProvider>
+
+
       {/* <div>
       <input type="file" accept=".csv, .xlsx" onChange={handleFileUpload} />
       </div> */}
       
       {/* <button onClick={handleDownloadCSV}>Download CSV</button> */}
-    </DndProvider>
+    {/* </DndProvider> */}
     </>
   );
 };
