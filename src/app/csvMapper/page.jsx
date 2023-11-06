@@ -33,8 +33,8 @@ const DraggableItem = ({ item, index, moveItem, columnIndex }) => {
 };
 
 const CsvPage = ({sendDataToDownload,csvData}) => {
-const csvfilterGroupA = csvData.groupA.filter((value) => value !== "");
-const csvfilterGroupB = csvData.groupB.filter((value) => value !== "");
+  const csvfilterGroupA = csvData.groupA.filter((value) => value !== "" && value !== undefined);
+  const csvfilterGroupB = csvData.groupB.filter((value) => value !== "" && value !== undefined);
 
 //console.log(filteredArray); // This will remove empty strings
   const [initialGroupA,setInitialGroupA] = useState(csvfilterGroupA);
