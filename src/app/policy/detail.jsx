@@ -297,9 +297,6 @@ policyTabData.forEach((data) => {
   }, [policyTabData, claimTabData, lobTabData,apiData]);
 
 
-
-
-
   const renderPolicyTabContent = (divId) => {
 
     // Find the corresponding data object for the specified divId
