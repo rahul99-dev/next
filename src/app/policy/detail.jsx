@@ -29,6 +29,7 @@ const Detail = () => {
   });
 
   const [apiData, setApiData] = useState()
+  const [inputValue,setInputValue]=useState('');
 
 
 
@@ -47,12 +48,12 @@ const Detail = () => {
       console.error('API request failed:', error);
     }
   };
-  
 
-  useEffect(()=>{
+
+  useEffect(() => {
     fetchData()
 
-  },[])
+  }, [])
 
 
   // Define a function to format a date string to "mm/dd/yyyy" format
@@ -186,115 +187,115 @@ const Detail = () => {
 
   useEffect(() => {
     // Create a copy of the existing formDataState
-    
-    if (apiData !== undefined && Object.keys(apiData).length > 0){
-    
-    let updatedFormData = { ...formDataState };
 
-    
-    const updatedApiData = { ...(apiData || {}) }; // Create a new mutable object from apiData or an empty object if apiData is undefined
+    if (apiData !== undefined && Object.keys(apiData).length > 0) {
 
-    if (updatedApiData.customFields) {
-      const fe_customFields = {};
-      updatedApiData.customFields.forEach((customField) => {
-        if (customField && customField.field_name && customField.field_value) {
-          fe_customFields[customField.field_name] = customField.field_value;
+      let updatedFormData = { ...formDataState };
+
+
+      const updatedApiData = { ...(apiData || {}) }; // Create a new mutable object from apiData or an empty object if apiData is undefined
+
+      if (updatedApiData.customFields) {
+        const fe_customFields = {};
+        updatedApiData.customFields.forEach((customField) => {
+          if (customField && customField.field_name && customField.field_value) {
+            fe_customFields[customField.field_name] = customField.field_value;
+          }
+        });
+        updatedApiData.fe_customFields = fe_customFields; // Add a new property with the custom field values
+      }
+
+      // Set the updated API data
+      setApiData(updatedApiData);
+
+      // Iterate through the policyTabData and set default values for the policyTab
+      // policyTabData.forEach((data) => {
+      //   if (data.control_name && data.control_default_value) {
+      //     updatedFormData = {
+      //       ...updatedFormData,
+      //       policyTab: {
+      //         ...updatedFormData.policyTab,
+      //         [data.control_name]: data.control_default_value,
+      //       },
+      //     };
+      //   }
+      // });
+
+
+
+      // Initialize the policyTab object within updatedFormData if it's not already present
+      if (!updatedFormData.policyTab) {
+        updatedFormData.policyTab = {};
+      }
+
+      // Initialize the customFields object within policyTab
+      if (!updatedFormData.policyTab.customFields) {
+        updatedFormData.policyTab.customFields = {};
+      }
+
+      // Iterate through the policyTabData and set default values for the policyTab
+      policyTabData.forEach((data) => {
+        if (data.control_name) {
+          if (data.api_entity_name) {
+            // Check if the field corresponds to a custom field
+            const customField = apiData.customFields.find(
+              (customField) => customField.field_name === data.api_entity_name
+            );
+
+            if (customField) {
+              // If a matching custom field is found, set its value within the customFields object
+              updatedFormData.policyTab.customFields[data.api_entity_name] = customField.field_value;
+            } else if (data.control_default_value) {
+              // If it's not a custom field, set the default value within the policyTab object
+              //updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+
+              if (data.api_entity_name.endsWith("Date")) {
+                // Check if it's a date field
+                const dateValue = new Date(data.control_default_value); // Parse the date
+                updatedFormData.policyTab[data.api_entity_name] = dateValue.toISOString(); // Format the date for the API
+              } else {
+                // For non-date fields
+                updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+              }
+            }
+          } else if (data.control_default_value) {
+            // Handle fields with no corresponding API entity name
+            updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+          }
         }
       });
-      updatedApiData.fe_customFields = fe_customFields; // Add a new property with the custom field values
-    }
-  
-  // Set the updated API data
-  setApiData(updatedApiData);
-
-    // Iterate through the policyTabData and set default values for the policyTab
-    // policyTabData.forEach((data) => {
-    //   if (data.control_name && data.control_default_value) {
-    //     updatedFormData = {
-    //       ...updatedFormData,
-    //       policyTab: {
-    //         ...updatedFormData.policyTab,
-    //         [data.control_name]: data.control_default_value,
-    //       },
-    //     };
-    //   }
-    // });
 
 
-
-    // Initialize the policyTab object within updatedFormData if it's not already present
-if (!updatedFormData.policyTab) {
-  updatedFormData.policyTab = {};
-}
-
-// Initialize the customFields object within policyTab
-if (!updatedFormData.policyTab.customFields) {
-  updatedFormData.policyTab.customFields = {};
-}
-
-// Iterate through the policyTabData and set default values for the policyTab
-policyTabData.forEach((data) => {
-  if (data.control_name) {
-    if (data.api_entity_name) {
-      // Check if the field corresponds to a custom field
-      const customField = apiData.customFields.find(
-        (customField) => customField.field_name === data.api_entity_name
-      );
-
-      if (customField) {
-        // If a matching custom field is found, set its value within the customFields object
-        updatedFormData.policyTab.customFields[data.api_entity_name] = customField.field_value;
-      } else if (data.control_default_value) {
-        // If it's not a custom field, set the default value within the policyTab object
-        //updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
-
-        if (data.api_entity_name.endsWith("Date")) {
-          // Check if it's a date field
-          const dateValue = new Date(data.control_default_value); // Parse the date
-          updatedFormData.policyTab[data.api_entity_name] = dateValue.toISOString(); // Format the date for the API
-        } else {
-          // For non-date fields
-          updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+      // Iterate through the claimTabData and set default values for the claimTab
+      claimTabData.forEach((data) => {
+        if (data.control_name && data.control_default_value) {
+          updatedFormData = {
+            ...updatedFormData,
+            claimTab: {
+              ...updatedFormData.claimTab,
+              [data.control_name]: data.control_default_value,
+            },
+          };
         }
-      }
-    } else if (data.control_default_value) {
-      // Handle fields with no corresponding API entity name
-      updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+      });
+
+      // Iterate through the lobTabData and set default values for the lobTab
+      lobTabData.forEach((data) => {
+        if (data.control_name && data.control_default_value) {
+          updatedFormData = {
+            ...updatedFormData,
+            lobTab: {
+              ...updatedFormData.lobTab,
+              [data.control_name]: data.control_default_value,
+            },
+          };
+        }
+      });
+
+      // Update the formDataState with the new values
+      setFormDataState(updatedFormData);
     }
-  }
-});
-
-
-    // Iterate through the claimTabData and set default values for the claimTab
-    claimTabData.forEach((data) => {
-      if (data.control_name && data.control_default_value) {
-        updatedFormData = {
-          ...updatedFormData,
-          claimTab: {
-            ...updatedFormData.claimTab,
-            [data.control_name]: data.control_default_value,
-          },
-        };
-      }
-    });
-
-    // Iterate through the lobTabData and set default values for the lobTab
-    lobTabData.forEach((data) => {
-      if (data.control_name && data.control_default_value) {
-        updatedFormData = {
-          ...updatedFormData,
-          lobTab: {
-            ...updatedFormData.lobTab,
-            [data.control_name]: data.control_default_value,
-          },
-        };
-      }
-    });
-
-    // Update the formDataState with the new values
-    setFormDataState(updatedFormData);
-  }
-  }, [policyTabData, claimTabData, lobTabData,apiData]);
+  }, [policyTabData, claimTabData, lobTabData, apiData]);
 
 
   const renderPolicyTabContent = (divId) => {
@@ -343,125 +344,117 @@ policyTabData.forEach((data) => {
       }
 
       // Render the content based on the control_type
-      if (apiData !== undefined && Object.keys(apiData).length > 0){
-      switch (data.control_type) {
-        case "textbox":
-          return (
-            <div key={divId}>
-              {/* <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label> */}
-              
-              <input
-                type="text"
-                id={data.api_entity_name}
-                name={data.api_entity_name}
-                placeholder={data.control_placeholder}
-                value={apiData && apiData[data.api_entity_name]
-                  ? apiData[data.api_entity_name]
-                  : (apiData && apiData.fe_customFields
-                    && apiData.fe_customFields
-                    [data.api_entity_name]
-                    ? apiData.fe_customFields
-                    [data.api_entity_name]
-                    : data.control_default_value)}
-                // value={apiData ? apiData[data.api_entity_name] : data.control_default_value}
-                //defaultValue={data.control_default_value}
-                //onChange={data.control_onchange}
-                onChange={(e) => handleInputChange(e, 'policyTab', divId)}
-                onBlur={data.control_onblur}
-                required={data.is_required ? true : false} // Conditionally add "required" attribute
-              />
-                  
-            </div>
-          );
+      if (apiData !== undefined && Object.keys(apiData).length > 0) {
+        switch (data.control_type) {
+          case "textbox":
+            return (
+              <div key={divId}>
+                {/* <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label> */}
+
+                <input
+                  type="text"
+                  id={data.api_entity_name}
+                  name={data.api_entity_name}
+                  placeholder={data.control_placeholder}
+                  value={apiData && apiData[data.api_entity_name]
+                    ? apiData[data.api_entity_name]
+                    : (apiData && apiData.fe_customFields
+                      && apiData.fe_customFields
+                      [data.api_entity_name]
+                      ? apiData.fe_customFields
+                      [data.api_entity_name]
+                      : data.control_default_value)}
+                  // value={apiData ? apiData[data.api_entity_name] : data.control_default_value}
+                  //defaultValue={data.control_default_value}
+                  //onChange={data.control_onchange}
+                  onChange={(e) => handleInputChange(e, 'policyTab', divId)}
+                  onBlur={data.control_onblur}
+                  required={data.is_required ? true : false} // Conditionally add "required" attribute
+                  // maxLength={data.length}
+                  data-error-id={data.error_id}
+                />
+
+                {inputValue.length > data.length && (
+                  <div className="error-message">
+                    {`${data.control_name} length exceeds the limit.`}
+                  </div>
+                )}
+
+              </div>
+            );
 
 
-        case "date":
-          return (
-            <div key={divId}>
-              <input
-                type="date"
-                id={data.api_entity_name}
-                name={data.api_entity_name}
-                placeholder={data.control_placeholder}
-                value={formatDateForInput(apiData && apiData[data.api_entity_name])}
-                onChange={e => handleInputChange(e, 'policyTab', data.divId)}
-                required={data.is_required}
-              />
-            </div>
-          );
+          case "date":
+            return (
+              <div key={divId}>
+                <input
+                  type="date"
+                  id={data.api_entity_name}
+                  name={data.api_entity_name}
+                  placeholder={data.control_placeholder}
+                  value={formatDateForInput(apiData && apiData[data.api_entity_name])}
+                  onChange={e => handleInputChange(e, 'policyTab', data.divId)}
+                  required={data.is_required}
+                />
+              </div>
+            );
 
-        case "number":
-          return (
-            <div key={divId}>
-              <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-              <input className='input-box'
-                type="number" // Use type "number" for number input fields
-                id={data.control_name}
-                name={data.api_entity_name}
-                placeholder={data.control_placeholder}
-                defaultValue={data.control_defualt_value}
-                //onChange={data.control_onchange}
-                onChange={(e) => handleInputChange(e, divId)}
-                onBlur={data.control_onblur}
-                required={data.is_required ? true : false} // Conditionally add "required" attribute
-              />
-            </div>
-          );
+          case "number":
+            return (
+              <div key={divId}>
+                <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
+                <input 
+                  type="number" // Use type "number" for number input fields
+                  id={data.control_name}
+                  name={data.api_entity_name}
+                  placeholder={data.control_placeholder}
+                  defaultValue={data.control_defualt_value}
+                  //onChange={data.control_onchange}
+                  onChange={(e) => handleInputChange(e, divId)}
+                  onBlur={data.control_onblur}
+                  required={data.is_required ? true : false} // Conditionally add "required" attribute
+                />
+              </div>
+            );
 
-        case "dropdown":
-          return (
-            <div key={divId}>
-              <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-              <select
-                id={data.control_name}
-                name={data.control_name}
-                onChange={data.control_onchange}
-                onBlur={data.control_onblur}
-                required={data.is_required ? true : false} // Conditionally add "required" attribute
-              >
-                <option value="">Select an option</option>
-                <option>Option 1</option>
-                <option>Option 2</option>
-                <option>Option 3</option>
-              </select>
-            </div>
-          );
+          case "dropdown":
+            return (
+              <div key={divId}>
+                {/* <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label> */}
+                <select
+                  id={data.control_name}
+                  name={data.control_name}
+                  onChange={data.control_onchange}
+                  onBlur={data.control_onblur}
+                  required={data.is_required ? true : false} // Conditionally add "required" attribute
+                >
+                  <option value="">Select an option</option>
+                  <option>Option 1</option>
+                  <option>Option 2</option>
+                  <option>Option 3</option>
+                </select>
+              </div>
+            );
 
-        case "checkbox":
-          return (
-            <div key={divId}>
-              <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-              <input className='checkbox'
-                type="checkbox"
-                id={data.control_name}
-                name={data.control_name}
-                onChange={data.control_onchange}
-                onBlur={data.control_onblur}
-                required={data.is_required ? true : false} // Conditionally add "required" attribute
-              />
+          case "checkbox":
+            return (
+              <div key={divId}>
+                {/* <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label> */}
+                <input 
+                  type="checkbox"
+                  id={data.control_name}
+                  name={data.control_name}
+                  onChange={data.control_onchange}
+                  onBlur={data.control_onblur}
+                  required={data.is_required ? true : false} // Conditionally add "required" attribute
+                />
 
-            </div>
-          );
-
-        case "button":
-          return (
-            <button className='button' type="submit">{data.button_label}</button>
-          );
-
-
-        // Add cases for "h2" and "p" content
-        case "content":
-          return (
-            <div key={divId}>
-              {data.content.h2 && <h2>{data.content.h2}</h2>}
-              {data.content.p && <p>{data.content.p}</p>}
-            </div>
-          );
-
-        default:
-          return null;
+              </div>
+            );
+          default:
+            return null;
+        }
       }
-    }
     }
 
   };
@@ -787,11 +780,12 @@ policyTabData.forEach((data) => {
   // };
 
 
-  const handleInputChange = (e, tabName, divId, policyTabData, apiData) => {
+  const handleInputChange = (e, tabName, divId) => {
     debugger;
     const { name, value, type, checked } = e.target;
     const inputValue = type === 'checkbox' ? checked : value;
-   
+    setInputValue(value)
+
     // if (tabName === "policyTab") {
     //   setFormDataState((prevData) => {
     //     const updatedData = { ...prevData };
@@ -820,6 +814,7 @@ policyTabData.forEach((data) => {
     //     },
     //   }));
     // }
+
 
     if (tabName === "policyTab") {
       setApiData((prevApiData) => {
@@ -855,6 +850,7 @@ policyTabData.forEach((data) => {
 
         return updatedApiData;
       });
+
     }
     // else {
     //   // Handle fields in other tabs
@@ -895,9 +891,9 @@ policyTabData.forEach((data) => {
     const formDataJSON = convertToJSON(apiData);
 
     const { customFields, ...updatedFormDataJSON } = formDataJSON; // to remove customFields array
-    const  updatedApiData = {...updatedFormDataJSON};
+    const updatedApiData = { ...updatedFormDataJSON };
     updatedApiData.customFields = updatedFormDataJSON.fe_customFields; // Add a new property with the custom field values
-    const {fe_customFields, ...updatedFormJSON } = updatedApiData;  // to remove fe_customFields
+    const { fe_customFields, ...updatedFormJSON } = updatedApiData;  // to remove fe_customFields
     console.log(updatedFormJSON);
     // Assuming formDataJSON is an array of objects
     //const updatedData = formDataJSON.policyTab.id = "6548dd4a4d750ba8433cdafc"
@@ -1263,6 +1259,38 @@ policyTabData.forEach((data) => {
                                       </div>
                                     </span>
                                   </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra1__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra1')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra1__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra2__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra2')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra2__error')}
+                                      </div>
+                                    </span>
+                                  </div>
 
                                 </div>
 
@@ -1283,6 +1311,38 @@ policyTabData.forEach((data) => {
                                       </div>
                                     </span>
                                   </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra3__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra3')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra3__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra4__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra4')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra4__error')}
+                                      </div>
+                                    </span>
+                                  </div>
                                 </div>
 
                                 <div className="col-sm-12 col-md-4 col-lg-4 ">
@@ -1299,6 +1359,38 @@ policyTabData.forEach((data) => {
                                     <span>
                                       <div id='div_extended_family_name__error'>
                                         {renderPolicyTabContent('div_extended_family_name__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra5__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra5')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra5__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra6__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra6')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra6__error')}
                                       </div>
                                     </span>
                                   </div>
