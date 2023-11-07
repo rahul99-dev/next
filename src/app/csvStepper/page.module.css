@@ -5,9 +5,10 @@
     color: #fff;
     border: none;
     cursor: pointer;
-    margin: 5px;
+    margin: 20px;
     border-radius: 5px;
     font-weight: bold;
+    margin-left: 0px;
   }
   
   .button:disabled {
