@@ -561,7 +561,13 @@ const Detail = (props) => {
 
 <div className="main-hd my-4">
         <div className="pagetitle">
-          <h1>Policy : 3212</h1>
+        <h1>Policy</h1>
+        <nav>
+      <ol className="breadcrumb">
+        <li className="breadcrumb-item"><a href="/">Home</a></li>
+        <li className="breadcrumb-item active">Policy : 3212</li>
+      </ol>
+    </nav>
         </div>
         {/* <div className="third-div">
       <div className="backpage_button" >
