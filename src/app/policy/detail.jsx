@@ -1,13 +1,23 @@
 "use client"; 
 import React, {useEffect, useState} from "react";
+import policyData from '../ui-control-config/policy.json'
+import policyTab from '../ui-control-config/policyTab.json'
+import claimTab from '../ui-control-config/claimTab.json'
+import lobTab from '../ui-control-config/lobTab.json'
 
 
 const Detail = (props) => {
-  const lobTabData =props.Tabs.lobTab;
-  const claimTabData = props.Tabs.claimTab;
-  const policyTabData = props.Tabs.policyTab;
-  console.log("lobTabs",props.Tabs)
-  const formData = props.policy;
+  // const lobTabData =props.Tabs.lobTab;
+  // const claimTabData = props.Tabs.claimTab;
+  // const policyTabData = props.Tabs.policyTab;
+  // console.log("lobTabs",props.Tabs)
+  // const formData = props.policy;
+
+  const lobTabData =lobTab;
+  const claimTabData = claimTab;
+  const policyTabData = policyTab;
+  const formData = policyData;
+ 
 
   const [formDataState, setFormDataState] = useState({
     policyTab: {},
@@ -64,7 +74,6 @@ const Detail = (props) => {
     
   
     const renderPolicyTabContent = (divId) => {
-      debugger
   
       // Find the corresponding data object for the specified divId
       if (divId.endsWith("__label")) {
@@ -205,7 +214,6 @@ const Detail = (props) => {
     };
   
     const renderClaimTabContent = (divId) => {
-      debugger
       // Find the corresponding data object for the specified divId
       if (divId.endsWith("__label")) {
         // Remove the "_label" portion
@@ -344,7 +352,6 @@ const Detail = (props) => {
     };
   
     const renderLobTabContent = (divId) => {
-      debugger
       // Find the corresponding data object for the specified divId
       //const data = lobTabData.find(item => item.divId === divId);
   
@@ -872,6 +879,64 @@ const Detail = (props) => {
                                     <span>
                                       <div id='div_ProducerCode__error'>
                                         {renderPolicyTabContent('div_ProducerCode__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="col-sm-12 col-md-4 col-lg-4 ">
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_abc_code__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_abc_code')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_abc_code__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                  
+                                </div>
+
+                                <div className="col-sm-12 col-md-4 col-lg-4 ">
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_ved_code__label'>
+                                        {renderPolicyTabContent('div_ved_code__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_ved_code'>
+                                      {renderPolicyTabContent('div_ved_code')}
+                                    </div>
+                                    <span>
+                                      <div id='div_ved_code__error'>
+                                        {renderPolicyTabContent('div_ved_code__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="col-sm-12 col-md-4 col-lg-4 ">
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_extended_family_name__label'>
+                                        {renderPolicyTabContent('div_extended_family_name__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_extended_family_name'>
+                                      {renderPolicyTabContent('div_extended_family_name')}
+                                    </div>
+                                    <span>
+                                      <div id='div_extended_family_name__error'>
+                                        {renderPolicyTabContent('div_extended_family_name__error')}
                                       </div>
                                     </span>
                                   </div>

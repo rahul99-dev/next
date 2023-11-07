@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Papa from 'papaparse';
-import styles from './page.module.css'
+import styles from './csvMapper.module.css'
 
 const ItemType = 'ITEM';
 
@@ -33,8 +33,8 @@ const DraggableItem = ({ item, index, moveItem, columnIndex }) => {
 };
 
 const CsvPage = ({sendDataToDownload,csvData}) => {
-const csvfilterGroupA = csvData.groupA.filter((value) => value !== "");
-const csvfilterGroupB = csvData.groupB.filter((value) => value !== "");
+  const csvfilterGroupA = csvData.groupA.filter((value) => value !== "" && value !== undefined);
+  const csvfilterGroupB = csvData.groupB.filter((value) => value !== "" && value !== undefined);
 
 //console.log(filteredArray); // This will remove empty strings
   const [initialGroupA,setInitialGroupA] = useState(csvfilterGroupA);
