@@ -9,11 +9,16 @@
     border-radius: 5px;
     font-weight: bold;
     margin-left: 0px;
+    margin-right: 10px;
   }
   
   .button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+  }
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
   }
   
 

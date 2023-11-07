@@ -89,7 +89,7 @@ export default function Page() {
               <CsvDownload downloadData={mapperData} />
             )}
           </div>
-          <div>
+          <div className={styles["button-container"]}>
             <button className={styles["button"]}
               variant="secondary"
               disabled={currentStep === 0}
