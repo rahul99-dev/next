@@ -845,9 +845,9 @@ policyTabData.forEach((data) => {
           updatedApiData[name] = formattedDate; // Use the original date format here
         }
 
-        else if (name in updatedApiData.customFields) {
+        else if (name in updatedApiData.fe_customFields) {
           // Update the custom field inside policyTab
-          updatedApiData.customFields[name] = inputValue;
+          updatedApiData.fe_customFields[name] = inputValue;
         } else {
           // Handle other fields within policyTab
           updatedApiData[name] = inputValue;
