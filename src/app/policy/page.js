@@ -1,6 +1,7 @@
 //const { default: Detail } = require("./detail");
 "use client "
 import Detail from "./detail";
+import PolicyData from "./policyData";
 
 
 
@@ -633,7 +634,7 @@ const policy = [
 ]
 
  // const posts = await loadPosts();
- return <Detail />;
+ return <PolicyData />;
 };
 
 

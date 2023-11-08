@@ -1,25 +1,31 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import policyData from '../ui-control-config/policy.json'
-import policyTab from '../ui-control-config/policyTab.json'
-import claimTab from '../ui-control-config/claimTab.json'
-import lobTab from '../ui-control-config/lobTab.json'
+// import policyData from '../ui-control-config/policy.json'
+// import policyTab from '../ui-control-config/policyTab.json'
+// import claimTab from '../ui-control-config/claimTab.json'
+// import lobTab from '../ui-control-config/lobTab.json'
 import axios from 'axios';
 
 
-const Detail = () => {
+const Detail = (props) => {
   // const lobTabData =props.Tabs.lobTab;
   // const claimTabData = props.Tabs.claimTab;
   // const policyTabData = props.Tabs.policyTab;
   // console.log("lobTabs",props.Tabs)
   // const formData = props.policy;
 
-  const lobTabData = lobTab;
-  const claimTabData = claimTab;
-  const policyTabData = policyTab;
-  const formData = policyData;
+  // const lobTabData = propslobTab;
+  // const claimTabData = claimTab;
+  // const policyTabData = policyTab;
+  // const formData = policyData;
 
   //console.log("props", props);
+
+
+  const lobTabData = props.lobTabData;
+  const claimTabData = props.claimTabData;
+  const policyTabData = props.policyTabData;
+  const formData = props.formData;
 
 
   const [formDataState, setFormDataState] = useState({
@@ -28,32 +34,32 @@ const Detail = () => {
     lobTab: {},
   });
 
-  const [apiData, setApiData] = useState()
+  const [apiData, setApiData] = useState( props.apiData)
   const [inputValue,setInputValue]=useState('');
 
 
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch('https://netpolicyapi.azurewebsites.net/api/Policy/654a0dcbc7409b51abdd9ed0'); // Replace with your API endpoint
-      if (response.ok) {
-        const result = await response.json();
-        setApiData(result)
-        return result
-        //setData(result);
-      } else {
-        // Handle error or set state accordingly
-      }
-    } catch (error) {
-      console.error('API request failed:', error);
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await fetch('https://netpolicyapi.azurewebsites.net/api/Policy/654a0dcbc7409b51abdd9ed0'); // Replace with your API endpoint
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       setApiData(result)
+  //       return result
+  //       //setData(result);
+  //     } else {
+  //       // Handle error or set state accordingly
+  //     }
+  //   } catch (error) {
+  //     console.error('API request failed:', error);
+  //   }
+  // };
 
 
-  useEffect(() => {
-    fetchData()
+  // useEffect(() => {
+  //   fetchData()
 
-  }, [])
+  // }, [])
 
 
   // Define a function to format a date string to "mm/dd/yyyy" format
@@ -295,7 +301,7 @@ const Detail = () => {
       // Update the formDataState with the new values
       setFormDataState(updatedFormData);
     }
-  }, [policyTabData, claimTabData, lobTabData, apiData]);
+  }, []);
 
 
   const renderPolicyTabContent = (divId) => {
