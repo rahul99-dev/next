@@ -1,56 +1,48 @@
 /* styles.css */
 .button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    margin: 20px;
-    border-radius: 5px;
-    font-weight: bold;
-    margin-left: 0px;
-    margin-right: 10px;
-  }
-  
-  .button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  .button-container {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-
-  .step.active {
-    /* Add your active step styling here */
-    color: #007bff; /* Change text color to blue for active steps */
-    border-color: #007bff; /* Change border color to blue for active steps */
-  }
-
-
-
-
-  .step {
-    border: 2px solid #ccc;
-    padding: 10px;
-  }
-  
-  .step.active {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-  }
-  
-  /* Define styles for dots */
-  .dot {
-    width: 10px;
-    height: 10px;
-    background-color: #ccc;
-    border-radius: 50%;
-    margin: 0 5px;
-  }
-  
-  .dot.active {
-    background-color: #007bff;
-  }
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin: 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-left: 0px;
+  margin-right: 10px;
+}
+.button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+.step.active {
+  /* Add your active step styling here */
+  color: #007bff;
+  /* Change text color to blue for active steps */
+  border-color: #007bff;
+  /* Change border color to blue for active steps */
+}
+.step {
+  border: 2px solid #ccc;
+  padding: 10px;
+}
+.step.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+/* Define styles for dots */
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: #ccc;
+  border-radius: 50%;
+  margin: 0 5px;
+}
+.dot.active {
+  background-color: #007bff;
+}

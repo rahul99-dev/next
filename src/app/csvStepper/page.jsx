@@ -57,74 +57,74 @@ export default function Page() {
 
   return (
     <>
-    <div className="pagetitle">
-    <h1>Dashboard</h1>
-    <nav>
-      <ol className="breadcrumb">
-        <li className="breadcrumb-item"><a href="/">Home</a></li>
-        <li className="breadcrumb-item active">CSV Mapping</li>
-      </ol>
-    </nav>
-  </div>
-    <Container>
-      <Row>
-        <Col md={12}>
-          <Stepper
-            steps={steps}
-            activeStep={currentStep}
-          />
-          <hr />
-          <div className="step-content">
-            {currentStep === 0 && (
-              <>
-                <CsvImporter sendDataToPage={receiveDataFromImporter} />
-                {error && <p className="error-message">{error}</p>}
-              </>
-            )}
-            {currentStep === 1 && (
-              <CsvPage sendDataToDownload={receiveDataFromMapper} csvData={importedData} />
-            )}
-            {currentStep === 2 && (
-              <CsvDownload downloadData={mapperData} />
-            )}
-          </div>
-          <div className={styles["button-container"]}>
-            {currentStep === 0 && (
-              <button className={styles["button"]}
-                variant="primary"
-                onClick={handleNext}
-              >
-                Next
-              </button>
-            )}
-            {currentStep === 1 && (
-              <>
-                <button className={styles["button"]}
-                  variant="secondary"
-                  onClick={handlePrevious}
-                >
-                  Previous
-                </button>
+      <div className="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item"><a href="/">Home</a></li>
+            <li className="breadcrumb-item active">CSV Mapping</li>
+          </ol>
+        </nav>
+      </div>
+      <Container>
+        <Row>
+          <Col md={12}>
+            <Stepper
+              steps={steps}
+              activeStep={currentStep}
+            />
+            <hr />
+            <div className="step-content">
+              {currentStep === 0 && (
+                <>
+                  <CsvImporter sendDataToPage={receiveDataFromImporter} />
+                  {error && <p className="error-message">{error}</p>}
+                </>
+              )}
+              {currentStep === 1 && (
+                <CsvPage sendDataToDownload={receiveDataFromMapper} csvData={importedData} />
+              )}
+              {currentStep === 2 && (
+                <CsvDownload downloadData={mapperData} />
+              )}
+            </div>
+            <div className={styles["button-container"]}>
+              {currentStep === 0 && (
                 <button className={styles["button"]}
                   variant="primary"
                   onClick={handleNext}
                 >
                   Next
                 </button>
-              </>
-            )}
-            {currentStep === 2 && (
-              <button className={styles["button"]}
-                variant="secondary"
-                onClick={handlePrevious}
-              >
-                Previous
-              </button>
-            )}
-          </div>
-        </Col>
-      </Row>
-    </Container>
+              )}
+              {currentStep === 1 && (
+                <>
+                  <button className={styles["button"]}
+                    variant="secondary"
+                    onClick={handlePrevious}
+                  >
+                    Previous
+                  </button>
+                  <button className={styles["button"]}
+                    variant="primary"
+                    onClick={handleNext}
+                  >
+                    Next
+                  </button>
+                </>
+              )}
+              {currentStep === 2 && (
+                <button className={styles["button"]}
+                  variant="secondary"
+                  onClick={handlePrevious}
+                >
+                  Previous
+                </button>
+              )}
+            </div>
+          </Col>
+        </Row>
+      </Container>
     </>
   );
 }
