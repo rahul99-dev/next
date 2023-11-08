@@ -1,22 +1,29 @@
-const { default: Detail } = require("./detail");
+//const { default: Detail } = require("./detail");
+"use client "
+import Detail from "./detail";
+
 
 
 
 // Next.js fetch API in action
-async function loadPosts() {
-  
-  const acmeurl = process.env.REACT_APP_API;
-  const apiUrl = `${acmeurl}/Policy/6548dd4a4d750ba8433cdaf`;
-  
-  const res = await fetch(apiUrl);
-  // const res = await fetch("https://mocki.io/v1/d4867d8b-b5d5-4a48-a4ab-79131b5809b8");
-  console.log("res",res)
-  return res.json();
-}
+// async function loadPosts() {
+//   debugger
+//   // const acmeurl = process.env.REACT_APP_API;
+//   // const apiUrl = `${acmeurl}/Policy/6548dd4a4d750ba8433cdaf`;
+//   //const url = ${process.env.REACT_APP_API}+"/Policy/6548dd4a4d750ba8433cdaf"
+//   const res = await fetch("https://netpolicyapi.azurewebsites.net/api/Policy/654a0dcbc7409b51abdd9ed0");
+//   // const res = await fetch("https://mocki.io/v1/d4867d8b-b5d5-4a48-a4ab-79131b5809b8");
+//   console.log("res",res)
+//   return res.json();
+// }
 
-const Page = async () => {
+
+const Page =  () => {
   debugger
-  loadPosts();
+
+    // Call loadPosts and wait for its response
+    //const response = await loadPosts();
+  //loadPosts();
   const Tabs = {
 
     lobTab : [
@@ -625,11 +632,9 @@ const policy = [
   }
 ]
 
-  
-
-
-  // const posts = await loadPosts();
-  return <Detail Tabs={Tabs} policy = {policy}/>;
+ // const posts = await loadPosts();
+ return <Detail />;
 };
+
 
 export default Page;

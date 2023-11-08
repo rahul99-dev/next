@@ -1,23 +1,26 @@
-"use client"; 
-import React, {useEffect, useState} from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import policyData from '../ui-control-config/policy.json'
 import policyTab from '../ui-control-config/policyTab.json'
 import claimTab from '../ui-control-config/claimTab.json'
 import lobTab from '../ui-control-config/lobTab.json'
+import axios from 'axios';
 
 
-const Detail = (props) => {
+const Detail = () => {
   // const lobTabData =props.Tabs.lobTab;
   // const claimTabData = props.Tabs.claimTab;
   // const policyTabData = props.Tabs.policyTab;
   // console.log("lobTabs",props.Tabs)
   // const formData = props.policy;
 
-  const lobTabData =lobTab;
+  const lobTabData = lobTab;
   const claimTabData = claimTab;
   const policyTabData = policyTab;
   const formData = policyData;
- 
+
+  //console.log("props", props);
+
 
   const [formDataState, setFormDataState] = useState({
     policyTab: {},
@@ -25,23 +28,244 @@ const Detail = (props) => {
     lobTab: {},
   });
 
-    useEffect(() => {
-      // Create a copy of the existing formDataState
+  const [apiData, setApiData] = useState()
+  const [inputValue,setInputValue]=useState('');
+
+
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('https://netpolicyapi.azurewebsites.net/api/Policy/654a0dcbc7409b51abdd9ed0'); // Replace with your API endpoint
+      if (response.ok) {
+        const result = await response.json();
+        setApiData(result)
+        return result
+        //setData(result);
+      } else {
+        // Handle error or set state accordingly
+      }
+    } catch (error) {
+      console.error('API request failed:', error);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchData()
+
+  }, [])
+
+
+  // Define a function to format a date string to "mm/dd/yyyy" format
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return date.toLocaleDateString(undefined, options);
+  };
+
+
+  function formatDateForInput(apiDate) {
+    if (!apiDate) return ''; // Handle cases where the date is not available
+
+    const date = new Date(apiDate);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  // useEffect(() => {
+  //   debugger
+  //   // Create a copy of the existing formDataState
+  //   if (apiData !== undefined && Object.keys(apiData).length > 0){
+  //   let updatedFormData = { ...formDataState };
+  //   const updatedApiData = { ...(apiData || {}) }; // Create a new mutable object from apiData or an empty object if apiData is undefined
+
+  //   if (updatedApiData.customFields) {
+  //     const customFields = {};
+  //     updatedApiData.customFields.forEach((customField) => {
+  //       if (customField && customField.field_name && customField.field_value) {
+  //         customFields[customField.field_name] = customField.field_value;
+  //       }
+  //     });
+  //     updatedApiData.customFields = customFields; // Add a new property with the custom field values
+  //   }
+
+  //   // Set the updated API data
+  //   setApiData(updatedApiData);
+
+  //   // Iterate through the policyTabData and set default values for the policyTab
+  //   // policyTabData.forEach((data) => {
+  //   //   if (data.control_name && data.control_default_value) {
+  //   //     updatedFormData = {
+  //   //       ...updatedFormData,
+  //   //       policyTab: {
+  //   //         ...updatedFormData.policyTab,
+  //   //         [data.control_name]: data.control_default_value,
+  //   //       },
+  //   //     };
+  //   //   }
+  //   // });
+
+
+
+  //   // Initialize the policyTab object within updatedFormData if it's not already present
+  //   if (!updatedFormData.policyTab) {
+  //     updatedFormData.policyTab = {};
+  //   }
+
+  //   // Initialize the customFields object within policyTab
+  //   if (!updatedFormData.policyTab.customFields) {
+  //     updatedFormData.policyTab.customFields = {};
+  //   }
+
+  //   // Iterate through the policyTabData and set default values for the policyTab
+  //   policyTabData.forEach((data) => {
+  //     if (data.control_name) {
+  //       if (data.api_entity_name) {
+  //         // Check if the field corresponds to a custom field
+  //         const customField = apiData.customFields.find(
+  //           (customField) => customField.field_name === data.api_entity_name
+  //         );
+
+  //         if (customField) {
+  //           // If a matching custom field is found, set its value within the customFields object
+  //           updatedFormData.policyTab.customFields[data.api_entity_name] = customField.field_value;
+  //         } else if (data.control_default_value) {
+  //           // If it's not a custom field, set the default value within the policyTab object
+  //           //updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+
+  //           if (data.api_entity_name.endsWith("Date")) {
+  //             // Check if it's a date field
+  //             const dateValue = new Date(data.control_default_value); // Parse the date
+  //             updatedFormData.policyTab[data.api_entity_name] = dateValue.toISOString(); // Format the date for the API
+  //           } else {
+  //             // For non-date fields
+  //             updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+  //           }
+  //         }
+  //       } else if (data.control_default_value) {
+  //         // Handle fields with no corresponding API entity name
+  //         updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+  //       }
+  //     }
+  //   });
+
+
+  //   // Iterate through the claimTabData and set default values for the claimTab
+  //   claimTabData.forEach((data) => {
+  //     if (data.control_name && data.control_default_value) {
+  //       updatedFormData = {
+  //         ...updatedFormData,
+  //         claimTab: {
+  //           ...updatedFormData.claimTab,
+  //           [data.control_name]: data.control_default_value,
+  //         },
+  //       };
+  //     }
+  //   });
+
+  //   // Iterate through the lobTabData and set default values for the lobTab
+  //   lobTabData.forEach((data) => {
+  //     if (data.control_name && data.control_default_value) {
+  //       updatedFormData = {
+  //         ...updatedFormData,
+  //         lobTab: {
+  //           ...updatedFormData.lobTab,
+  //           [data.control_name]: data.control_default_value,
+  //         },
+  //       };
+  //     }
+  //   });
+
+  //   // Update the formDataState with the new values
+  //   setFormDataState(updatedFormData);
+  // }
+  // }, [policyTabData, claimTabData, lobTabData,apiData]);
+
+
+  useEffect(() => {
+    // Create a copy of the existing formDataState
+
+    if (apiData !== undefined && Object.keys(apiData).length > 0) {
+
       let updatedFormData = { ...formDataState };
-    
+
+
+      const updatedApiData = { ...(apiData || {}) }; // Create a new mutable object from apiData or an empty object if apiData is undefined
+
+      if (updatedApiData.customFields) {
+        const fe_customFields = {};
+        updatedApiData.customFields.forEach((customField) => {
+          if (customField && customField.field_name && customField.field_value) {
+            fe_customFields[customField.field_name] = customField.field_value;
+          }
+        });
+        updatedApiData.fe_customFields = fe_customFields; // Add a new property with the custom field values
+      }
+
+      // Set the updated API data
+      setApiData(updatedApiData);
+
+      // Iterate through the policyTabData and set default values for the policyTab
+      // policyTabData.forEach((data) => {
+      //   if (data.control_name && data.control_default_value) {
+      //     updatedFormData = {
+      //       ...updatedFormData,
+      //       policyTab: {
+      //         ...updatedFormData.policyTab,
+      //         [data.control_name]: data.control_default_value,
+      //       },
+      //     };
+      //   }
+      // });
+
+
+
+      // Initialize the policyTab object within updatedFormData if it's not already present
+      if (!updatedFormData.policyTab) {
+        updatedFormData.policyTab = {};
+      }
+
+      // Initialize the customFields object within policyTab
+      if (!updatedFormData.policyTab.customFields) {
+        updatedFormData.policyTab.customFields = {};
+      }
+
       // Iterate through the policyTabData and set default values for the policyTab
       policyTabData.forEach((data) => {
-        if (data.control_name && data.control_default_value) {
-          updatedFormData = {
-            ...updatedFormData,
-            policyTab: {
-              ...updatedFormData.policyTab,
-              [data.control_name]: data.control_default_value,
-            },
-          };
+        if (data.control_name) {
+          if (data.api_entity_name) {
+            // Check if the field corresponds to a custom field
+            const customField = apiData.customFields.find(
+              (customField) => customField.field_name === data.api_entity_name
+            );
+
+            if (customField) {
+              // If a matching custom field is found, set its value within the customFields object
+              updatedFormData.policyTab.customFields[data.api_entity_name] = customField.field_value;
+            } else if (data.control_default_value) {
+              // If it's not a custom field, set the default value within the policyTab object
+              //updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+
+              if (data.api_entity_name.endsWith("Date")) {
+                // Check if it's a date field
+                const dateValue = new Date(data.control_default_value); // Parse the date
+                updatedFormData.policyTab[data.api_entity_name] = dateValue.toISOString(); // Format the date for the API
+              } else {
+                // For non-date fields
+                updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+              }
+            }
+          } else if (data.control_default_value) {
+            // Handle fields with no corresponding API entity name
+            updatedFormData.policyTab[data.api_entity_name] = data.control_default_value;
+          }
         }
       });
-    
+
+
       // Iterate through the claimTabData and set default values for the claimTab
       claimTabData.forEach((data) => {
         if (data.control_name && data.control_default_value) {
@@ -54,7 +278,7 @@ const Detail = (props) => {
           };
         }
       });
-    
+
       // Iterate through the lobTabData and set default values for the lobTab
       lobTabData.forEach((data) => {
         if (data.control_name && data.control_default_value) {
@@ -67,85 +291,122 @@ const Detail = (props) => {
           };
         }
       });
-    
+
       // Update the formDataState with the new values
       setFormDataState(updatedFormData);
-    }, [policyTabData, claimTabData, lobTabData]);
-    
-  
-    const renderPolicyTabContent = (divId) => {
-  
-      // Find the corresponding data object for the specified divId
-      if (divId.endsWith("__label")) {
-        // Remove the "_label" portion
-        const originalDivId = divId.replace(/__label$/, '');
-  
-        // Find the corresponding data object for the modified divId
-        const data = policyTabData.find((item) => item.divId === originalDivId);
-        if (!data) {
-          return ""; // Return null if data not found
-        }
-        if (data && typeof data.control_label === 'string' && data.control_label.trim() !== '') {
-          return (
-            <div key={divId}>
-              {data.control_label}{data.is_required ? "*" : ""}
-            </div>
-          );
-        }
+    }
+  }, [policyTabData, claimTabData, lobTabData, apiData]);
+
+
+  const renderPolicyTabContent = (divId) => {
+
+    // Find the corresponding data object for the specified divId
+    if (divId.endsWith("__label")) {
+      // Remove the "_label" portion
+      const originalDivId = divId.replace(/__label$/, '');
+
+      // Find the corresponding data object for the modified divId
+      const data = policyTabData.find((item) => item.divId === originalDivId);
+      if (!data) {
+        return ""; // Return null if data not found
       }
-      // Check if divId ends with "_label"
-      else if (divId.endsWith("__error")) {
-        // Remove the "_label" portion
-        const originalDivId = divId.replace(/__error$/, '');
-  
-        // Find the corresponding data object for the modified divId
-        const data = policyTabData.find((item) => item.divId === originalDivId);
-        if (!data) {
-          return ""; // Return null if data not found
-        }
-        if (data && typeof data.error === 'string' && data.error.trim() !== '') {
-          return (
-            <div key={divId}>
-              {data.error}
-            </div>
-          );
-        }
+      if (data && typeof data.control_label === 'string' && data.control_label.trim() !== '') {
+        return (
+          <div key={divId}>
+            {data.control_label}{data.is_required ? "*" : ""}
+          </div>
+        );
       }
-      else {
-        const data = policyTabData.find(item => item.divId === divId);
-  
-        if (!data) {
-          return null; // Return null if data not found
-        }
-  
-        // Render the content based on the control_type
+    }
+    // Check if divId ends with "_label"
+    else if (divId.endsWith("__error")) {
+      // Remove the "_label" portion
+      const originalDivId = divId.replace(/__error$/, '');
+
+      // Find the corresponding data object for the modified divId
+      const data = policyTabData.find((item) => item.divId === originalDivId);
+      if (!data) {
+        return ""; // Return null if data not found
+      }
+      if (data && typeof data.error === 'string' && data.error.trim() !== '') {
+        return (
+          <div key={divId}>
+            {data.error}
+          </div>
+        );
+      }
+    }
+    else {
+      const data = policyTabData.find(item => item.divId === divId);
+
+      if (!data) {
+        return null; // Return null if data not found
+      }
+
+      // Render the content based on the control_type
+      if (apiData !== undefined && Object.keys(apiData).length > 0) {
         switch (data.control_type) {
           case "textbox":
             return (
               <div key={divId}>
                 {/* <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label> */}
+
                 <input
                   type="text"
-                  id={data.control_name}
-                  name={data.control_name}
+                  id={data.api_entity_name}
+                  name={data.api_entity_name}
                   placeholder={data.control_placeholder}
-                  defaultValue={data.control_default_value}
+                  value={apiData && apiData[data.api_entity_name]
+                    ? apiData[data.api_entity_name]
+                    : (apiData && apiData.fe_customFields
+                      && apiData.fe_customFields
+                      [data.api_entity_name]
+                      ? apiData.fe_customFields
+                      [data.api_entity_name]
+                      : data.control_default_value)}
+                  // value={apiData ? apiData[data.api_entity_name] : data.control_default_value}
+                  //defaultValue={data.control_default_value}
                   //onChange={data.control_onchange}
-                  onChange={(e) => handleInputChange(e,'policyTab', divId)}
+                  onChange={(e) => handleInputChange(e, 'policyTab', divId)}
                   onBlur={data.control_onblur}
                   required={data.is_required ? true : false} // Conditionally add "required" attribute
+                  // maxLength={data.length}
+                  data-error-id={data.error_id}
+                />
+
+                {inputValue.length > data.length && (
+                  <div className="error-message">
+                    {`${data.control_name} length exceeds the limit.`}
+                  </div>
+                )}
+
+              </div>
+            );
+
+
+          case "date":
+            return (
+              <div key={divId}>
+                <input
+                  type="date"
+                  id={data.api_entity_name}
+                  name={data.api_entity_name}
+                  placeholder={data.control_placeholder}
+                  value={formatDateForInput(apiData && apiData[data.api_entity_name])}
+                  onChange={e => handleInputChange(e, 'policyTab', data.divId)}
+                  required={data.is_required}
                 />
               </div>
             );
-  
+
           case "number":
             return (
               <div key={divId}>
                 <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-                <input className='input-box'
+                <input 
                   type="number" // Use type "number" for number input fields
                   id={data.control_name}
-                  name={data.control_name}
+                  name={data.api_entity_name}
                   placeholder={data.control_placeholder}
                   defaultValue={data.control_defualt_value}
                   //onChange={data.control_onchange}
@@ -155,149 +416,11 @@ const Detail = (props) => {
                 />
               </div>
             );
-  
+
           case "dropdown":
-            return (
-              <div key={divId}>
-                <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-                <select
-                  id={data.control_name}
-                  name={data.control_name}
-                  onChange={data.control_onchange}
-                  onBlur={data.control_onblur}
-                  required={data.is_required ? true : false} // Conditionally add "required" attribute
-                >
-                  <option value="">Select an option</option>
-                  <option>Option 1</option>
-                  <option>Option 2</option>
-                  <option>Option 3</option>
-                </select>
-              </div>
-            );
-  
-          case "checkbox":
-            return (
-              <div key={divId}>
-                <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-                <input className='checkbox'
-                  type="checkbox"
-                  id={data.control_name}
-                  name={data.control_name}
-                  onChange={data.control_onchange}
-                  onBlur={data.control_onblur}
-                  required={data.is_required ? true : false} // Conditionally add "required" attribute
-                />
-  
-              </div>
-            );
-  
-          case "button":
-            return (
-              <button className='button' type="submit">{data.button_label}</button>
-            );
-  
-  
-          // Add cases for "h2" and "p" content
-          case "content":
-            return (
-              <div key={divId}>
-                {data.content.h2 && <h2>{data.content.h2}</h2>}
-                {data.content.p && <p>{data.content.p}</p>}
-              </div>
-            );
-  
-          default:
-            return null;
-        }
-      }
-  
-    };
-  
-    const renderClaimTabContent = (divId) => {
-      // Find the corresponding data object for the specified divId
-      if (divId.endsWith("__label")) {
-        // Remove the "_label" portion
-        const originalDivId = divId.replace(/__label$/, '');
-  
-        // Find the corresponding data object for the modified divId
-        const data = claimTabData.find((item) => item.divId === originalDivId);
-        if (!data) {
-          return ""; // Return null if data not found
-        }
-        if (data && typeof data.control_label === 'string' && data.control_label.trim() !== '') {
-          return (
-            <div key={divId}>
-              {data.control_label}{data.is_required ? "*" : ""}
-            </div>
-          );
-        }
-      }
-      // Check if divId ends with "_label"
-      else if (divId.endsWith("__error")) {
-        // Remove the "_label" portion
-        const originalDivId = divId.replace(/__error$/, '');
-  
-        // Find the corresponding data object for the modified divId
-        const data = claimTabData.find((item) => item.divId === originalDivId);
-        if (!data) {
-          return ""; // Return null if data not found
-        }
-        if (data && typeof data.error === 'string' && data.error.trim() !== '') {
-          return (
-            <div key={divId}>
-              {data.error}
-            </div>
-          );
-        }
-      }
-      else {
-        const data = claimTabData.find(item => item.divId === divId);
-  
-        if (!data) {
-          return null; // Return null if data not found
-        }
-  
-        // Render the content based on the control_type
-        switch (data.control_type) {
-          case "textbox":
             return (
               <div key={divId}>
                 {/* <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label> */}
-                <input
-                  type="text"
-                  id={data.control_name}
-                  name={data.control_name}
-                  placeholder={data.control_placeholder}
-                  defaultValue={data.control_default_value}
-                  //onChange={data.control_onchange}
-                  onChange={(e) => handleInputChange(e,'claimTab', divId)}
-                  onBlur={data.control_onblur}
-                  required={data.is_required ? true : false} // Conditionally add "required" attribute
-                />
-              </div>
-            );
-  
-          case "number":
-            return (
-              <div key={divId}>
-                <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-                <input className='input-box'
-                  type="number" // Use type "number" for number input fields
-                  id={data.control_name}
-                  name={data.control_name}
-                  placeholder={data.control_placeholder}
-                  defaultValue={data.control_defualt_value}
-                  onChange={data.control_onchange}
-                  onBlur={data.control_onblur}
-                  required={data.is_required ? true : false} // Conditionally add "required" attribute
-                />
-              </div>
-            );
-  
-          case "dropdown":
-            return (
-              <div key={divId}>
-                <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
                 <select
                   id={data.control_name}
                   name={data.control_name}
@@ -312,157 +435,12 @@ const Detail = (props) => {
                 </select>
               </div>
             );
-  
+
           case "checkbox":
-            return (
-              <div key={divId}>
-                <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-                <input className='checkbox'
-                  type="checkbox"
-                  id={data.control_name}
-                  name={data.control_name}
-                  onChange={data.control_onchange}
-                  onBlur={data.control_onblur}
-                  required={data.is_required ? true : false} // Conditionally add "required" attribute
-                />
-  
-              </div>
-            );
-  
-          case "button":
-            return (
-              <button className='button' type="submit">{data.button_label}</button>
-            );
-  
-  
-          // Add cases for "h2" and "p" content
-          case "content":
-            return (
-              <div key={divId}>
-                {data.content.h2 && <h2>{data.content.h2}</h2>}
-                {data.content.p && <p>{data.content.p}</p>}
-              </div>
-            );
-  
-          default:
-            return null;
-        }
-      }
-  
-    };
-  
-    const renderLobTabContent = (divId) => {
-      // Find the corresponding data object for the specified divId
-      //const data = lobTabData.find(item => item.divId === divId);
-  
-  
-      // Check if divId ends with "_label"
-      if (divId.endsWith("__label")) {
-        // Remove the "_label" portion
-        const originalDivId = divId.replace(/__label$/, '');
-  
-        // Find the corresponding data object for the modified divId
-        const data = lobTabData.find((item) => item.divId === originalDivId);
-        if (!data) {
-          return ""; // Return null if data not found
-        }
-        if (data && typeof data.control_label === 'string' && data.control_label.trim() !== '') {
-          return (
-            <div key={divId}>
-              {data.control_label}{data.is_required ? "*" : ""}
-            </div>
-          );
-        }
-      }
-      // Check if divId ends with "_label"
-      else if (divId.endsWith("__error")) {
-        // Remove the "_label" portion
-        const originalDivId = divId.replace(/__error$/, '');
-  
-        // Find the corresponding data object for the modified divId
-        const data = lobTabData.find((item) => item.divId === originalDivId);
-        if (!data) {
-          return ""; // Return null if data not found
-        }
-        if (data && typeof data.error === 'string' && data.error.trim() !== '') {
-          return (
-            <span key={divId}>
-              {data.error}
-            </span>
-          );
-        }
-      }
-      else {
-        // Find the corresponding data object for the specified divId
-        const data = lobTabData.find(item => item.divId === divId);
-  
-  
-  
-        if (!data) {
-          return null; // Return null if data not found
-        }
-  
-        // Render the content based on the control_type
-        switch (data.control_type) {
-          case "textbox":
             return (
               <div key={divId}>
                 {/* <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label> */}
-                <input
-                  type="text"
-                  id={data.control_name}
-                  name={data.control_name}
-                  placeholder={data.control_placeholder}
-                  defaultValue={data.control_default_value}
-                  //onChange={data.control_onchange}
-                  onChange={(e) => handleInputChange(e,'lobTab', divId)}
-                  onBlur={data.control_onblur}
-                  required={data.is_required ? true : false} // Conditionally add "required" attribute
-                />
-              </div>
-            );
-  
-          case "number":
-            return (
-              <div key={divId}>
-                <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-                <input
-                  type="number" // Use type "number" for number input fields
-                  id={data.control_name}
-                  name={data.control_name}
-                  placeholder={data.control_placeholder}
-                  defaultValue={data.control_defualt_value}
-                  onChange={data.control_onchange}
-                  onBlur={data.control_onblur}
-                  required={data.is_required ? true : false} // Conditionally add "required" attribute
-                />
-              </div>
-            );
-  
-          case "dropdown":
-            return (
-              <div key={divId}>
-                <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-                <select
-                  id={data.control_name}
-                  name={data.control_name}
-                  onChange={data.control_onchange}
-                  onBlur={data.control_onblur}
-                  required={data.is_required ? true : false} // Conditionally add "required" attribute
-                >
-                  <option value="">Select an option</option>
-                  <option>Option 1</option>
-                  <option>Option 2</option>
-                  <option>Option 3</option>
-                </select>
-              </div>
-            );
-  
-          case "checkbox":
-            return (
-              <div key={divId}>
-                <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
-                <input className='checkbox'
+                <input 
                   type="checkbox"
                   id={data.control_name}
                   name={data.control_name}
@@ -470,96 +448,476 @@ const Detail = (props) => {
                   onBlur={data.control_onblur}
                   required={data.is_required ? true : false} // Conditionally add "required" attribute
                 />
-  
+
               </div>
             );
-  
-          case "button":
-            return (
-              <button className='button' type="submit">{data.button_label}</button>
-            );
-  
-  
-          // Add cases for "h2" and "p" content
-          case "content":
-            return (
-              <div key={divId}>
-                {data.content.h2 && <h2>{data.content.h2}</h2>}
-                {data.content.p && <p>{data.content.p}</p>}
-              </div>
-            );
-  
           default:
             return null;
         }
       }
-  
-    };
-  
-  
-    const renderTagContent = (divId, tag) => {
-      // Find the corresponding data object for the specified divId
-      const data = formData.find((item) => item.divId === divId);
-  
+    }
+
+  };
+
+  const renderClaimTabContent = (divId) => {
+    // Find the corresponding data object for the specified divId
+    if (divId.endsWith("__label")) {
+      // Remove the "_label" portion
+      const originalDivId = divId.replace(/__label$/, '');
+
+      // Find the corresponding data object for the modified divId
+      const data = claimTabData.find((item) => item.divId === originalDivId);
+      if (!data) {
+        return ""; // Return null if data not found
+      }
+      if (data && typeof data.control_label === 'string' && data.control_label.trim() !== '') {
+        return (
+          <div key={divId}>
+            {data.control_label}{data.is_required ? "*" : ""}
+          </div>
+        );
+      }
+    }
+    // Check if divId ends with "_label"
+    else if (divId.endsWith("__error")) {
+      // Remove the "_label" portion
+      const originalDivId = divId.replace(/__error$/, '');
+
+      // Find the corresponding data object for the modified divId
+      const data = claimTabData.find((item) => item.divId === originalDivId);
+      if (!data) {
+        return ""; // Return null if data not found
+      }
+      if (data && typeof data.error === 'string' && data.error.trim() !== '') {
+        return (
+          <div key={divId}>
+            {data.error}
+          </div>
+        );
+      }
+    }
+    else {
+      const data = claimTabData.find(item => item.divId === divId);
+
       if (!data) {
         return null; // Return null if data not found
       }
-  
-      let content;
-      if (tag === 'h2') {
-        content = data.h2_tag_value;
-      } else if (tag === 'p') {
-        content = data.p_tag_value;
-      }
-  
-      if (content) {
-        return <>{content}</>;
-      }
-  
-      return null; // Return null if the requested tag is not in the data
-    };
 
-    const handleInputChange = (e, tabName, divId) => {
-      debugger;
-      const { name, value, type, checked } = e.target;
-      const inputValue = type === 'checkbox' ? checked : value;
-  
-      setFormDataState((prevData) => ({
-        ...prevData,
-        [tabName]: {
-          ...prevData[tabName],
-          [name]: inputValue,
-        },
-      }));
-    };
-  
-    const handleSave = () => {
-      debugger
-      // Serialize formDataState to JSON
-      const formDataJSON = convertToJSON(formDataState);
-  
-      // Perform the save operation, send formDataJSON to a server API or handle it as needed
-      console.log('Form data JSON to be saved:', formDataJSON);
-  
-      // You can also add validation logic before saving if needed
-      // ...
-    };
-  
-  
-    const convertToJSON = (formDataState) => {
-      debugger
-      const formDataJSON = {};
-      for (const key in formDataState) {
-        formDataJSON[key] = formDataState[key];
+      // Render the content based on the control_type
+      switch (data.control_type) {
+        case "textbox":
+          return (
+            <div key={divId}>
+              {/* <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label> */}
+              <input
+                type="text"
+                id={data.control_name}
+                name={data.control_name}
+                placeholder={data.control_placeholder}
+                defaultValue={data.control_default_value}
+                //onChange={data.control_onchange}
+                onChange={(e) => handleInputChange(e, 'claimTab', divId)}
+                onBlur={data.control_onblur}
+                required={data.is_required ? true : false} // Conditionally add "required" attribute
+              />
+            </div>
+          );
+
+        case "number":
+          return (
+            <div key={divId}>
+              <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
+              <input className='input-box'
+                type="number" // Use type "number" for number input fields
+                id={data.control_name}
+                name={data.control_name}
+                placeholder={data.control_placeholder}
+                defaultValue={data.control_defualt_value}
+                onChange={data.control_onchange}
+                onBlur={data.control_onblur}
+                required={data.is_required ? true : false} // Conditionally add "required" attribute
+              />
+            </div>
+          );
+
+        case "dropdown":
+          return (
+            <div key={divId}>
+              <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
+              <select
+                id={data.control_name}
+                name={data.control_name}
+                onChange={data.control_onchange}
+                onBlur={data.control_onblur}
+                required={data.is_required ? true : false} // Conditionally add "required" attribute
+              >
+                <option value="">Select an option</option>
+                <option>Option 1</option>
+                <option>Option 2</option>
+                <option>Option 3</option>
+              </select>
+            </div>
+          );
+
+        case "checkbox":
+          return (
+            <div key={divId}>
+              <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
+              <input className='checkbox'
+                type="checkbox"
+                id={data.control_name}
+                name={data.control_name}
+                onChange={data.control_onchange}
+                onBlur={data.control_onblur}
+                required={data.is_required ? true : false} // Conditionally add "required" attribute
+              />
+
+            </div>
+          );
+
+        case "button":
+          return (
+            <button className='button' type="submit">{data.button_label}</button>
+          );
+
+
+        // Add cases for "h2" and "p" content
+        case "content":
+          return (
+            <div key={divId}>
+              {data.content.h2 && <h2>{data.content.h2}</h2>}
+              {data.content.p && <p>{data.content.p}</p>}
+            </div>
+          );
+
+        default:
+          return null;
       }
-      return formDataJSON;
-    };
+    }
+
+  };
+
+  const renderLobTabContent = (divId) => {
+    // Find the corresponding data object for the specified divId
+    //const data = lobTabData.find(item => item.divId === divId);
+
+
+    // Check if divId ends with "_label"
+    if (divId.endsWith("__label")) {
+      // Remove the "_label" portion
+      const originalDivId = divId.replace(/__label$/, '');
+
+      // Find the corresponding data object for the modified divId
+      const data = lobTabData.find((item) => item.divId === originalDivId);
+      if (!data) {
+        return ""; // Return null if data not found
+      }
+      if (data && typeof data.control_label === 'string' && data.control_label.trim() !== '') {
+        return (
+          <div key={divId}>
+            {data.control_label}{data.is_required ? "*" : ""}
+          </div>
+        );
+      }
+    }
+    // Check if divId ends with "_label"
+    else if (divId.endsWith("__error")) {
+      // Remove the "_label" portion
+      const originalDivId = divId.replace(/__error$/, '');
+
+      // Find the corresponding data object for the modified divId
+      const data = lobTabData.find((item) => item.divId === originalDivId);
+      if (!data) {
+        return ""; // Return null if data not found
+      }
+      if (data && typeof data.error === 'string' && data.error.trim() !== '') {
+        return (
+          <span key={divId}>
+            {data.error}
+          </span>
+        );
+      }
+    }
+    else {
+      // Find the corresponding data object for the specified divId
+      const data = lobTabData.find(item => item.divId === divId);
+
+
+
+      if (!data) {
+        return null; // Return null if data not found
+      }
+
+      // Render the content based on the control_type
+      switch (data.control_type) {
+        case "textbox":
+          return (
+            <div key={divId}>
+              {/* <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label> */}
+              <input
+                type="text"
+                id={data.control_name}
+                name={data.control_name}
+                placeholder={data.control_placeholder}
+                defaultValue={data.control_default_value}
+                //onChange={data.control_onchange}
+                onChange={(e) => handleInputChange(e, 'lobTab', divId)}
+                onBlur={data.control_onblur}
+                required={data.is_required ? true : false} // Conditionally add "required" attribute
+              />
+            </div>
+          );
+
+        case "number":
+          return (
+            <div key={divId}>
+              <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
+              <input
+                type="number" // Use type "number" for number input fields
+                id={data.control_name}
+                name={data.control_name}
+                placeholder={data.control_placeholder}
+                defaultValue={data.control_defualt_value}
+                onChange={data.control_onchange}
+                onBlur={data.control_onblur}
+                required={data.is_required ? true : false} // Conditionally add "required" attribute
+              />
+            </div>
+          );
+
+        case "dropdown":
+          return (
+            <div key={divId}>
+              <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
+              <select
+                id={data.control_name}
+                name={data.control_name}
+                onChange={data.control_onchange}
+                onBlur={data.control_onblur}
+                required={data.is_required ? true : false} // Conditionally add "required" attribute
+              >
+                <option value="">Select an option</option>
+                <option>Option 1</option>
+                <option>Option 2</option>
+                <option>Option 3</option>
+              </select>
+            </div>
+          );
+
+        case "checkbox":
+          return (
+            <div key={divId}>
+              <label htmlFor={data.control_name}>{data.control_label} {data.is_required ? '*' : ''}:</label>
+              <input className='checkbox'
+                type="checkbox"
+                id={data.control_name}
+                name={data.control_name}
+                onChange={data.control_onchange}
+                onBlur={data.control_onblur}
+                required={data.is_required ? true : false} // Conditionally add "required" attribute
+              />
+
+            </div>
+          );
+
+        case "button":
+          return (
+            <button className='button' type="submit">{data.button_label}</button>
+          );
+
+
+        // Add cases for "h2" and "p" content
+        case "content":
+          return (
+            <div key={divId}>
+              {data.content.h2 && <h2>{data.content.h2}</h2>}
+              {data.content.p && <p>{data.content.p}</p>}
+            </div>
+          );
+
+        default:
+          return null;
+      }
+    }
+
+  };
+
+
+  const renderTagContent = (divId, tag) => {
+    // Find the corresponding data object for the specified divId
+    const data = formData.find((item) => item.divId === divId);
+
+    if (!data) {
+      return null; // Return null if data not found
+    }
+
+    let content;
+    if (tag === 'h2') {
+      content = data.h2_tag_value;
+    } else if (tag === 'p') {
+      content = data.p_tag_value;
+    }
+
+    if (content) {
+      return <>{content}</>;
+    }
+
+    return null; // Return null if the requested tag is not in the data
+  };
+
+  // const handleInputChange = (e, tabName, divId) => {
+  //   debugger;
+  //   const { name, value, type, checked } = e.target;
+  //   const inputValue = type === 'checkbox' ? checked : value;
+
+  //   setFormDataState((prevData) => ({
+  //     ...prevData,
+  //     [tabName]: {
+  //       ...prevData[tabName],
+  //       [name]: inputValue,
+  //     },
+  //   }));
+  // };
+
+
+  const handleInputChange = (e, tabName, divId) => {
+    debugger;
+    const { name, value, type, checked } = e.target;
+    const inputValue = type === 'checkbox' ? checked : value;
+    setInputValue(value)
+
+    // if (tabName === "policyTab") {
+    //   setFormDataState((prevData) => {
+    //     const updatedData = { ...prevData };
+
+    //     if (!updatedData[tabName]) {
+    //       updatedData[tabName] = {};
+    //     }
+
+    //     if (name in updatedData[tabName].customFields) {
+    //       // Update the custom field inside policyTab
+    //       updatedData[tabName].customFields[name] = inputValue;
+    //     } else {
+    //       // Handle other fields within policyTab
+    //       updatedData[tabName][name] = inputValue;
+    //     }
+
+    //     return updatedData;
+    //   });
+    // } else {
+    //   // Handle fields in other tabs
+    //   setFormDataState((prevData) => ({
+    //     ...prevData,
+    //     [tabName]: {
+    //       ...prevData[tabName],
+    //       [name]: inputValue,
+    //     },
+    //   }));
+    // }
+
+
+    if (tabName === "policyTab") {
+      setApiData((prevApiData) => {
+        const updatedApiData = { ...prevApiData };
+
+        // if (!updatedApiData[tabName]) {
+        //   updatedApiData[tabName] = {};
+        // }
+
+        // Check if the current input field corresponds to a date field
+        if (name === "policyEffectiveDate" || name === "policyExpirationDate") {
+          // Set the original date format
+          const dateObj = new Date(value);
+
+          // Set the time to "12:30:57.027Z"
+          dateObj.setUTCHours(12);
+          dateObj.setUTCMinutes(30);
+          dateObj.setUTCSeconds(57);
+          dateObj.setUTCMilliseconds(27);
+
+          // Format the date as "2023-11-06T12:30:57.027Z"
+          const formattedDate = dateObj.toISOString();
+          updatedApiData[name] = formattedDate; // Use the original date format here
+        }
+
+        else if (name in updatedApiData.fe_customFields) {
+          // Update the custom field inside policyTab
+          updatedApiData.fe_customFields[name] = inputValue;
+        } else {
+          // Handle other fields within policyTab
+          updatedApiData[name] = inputValue;
+        }
+
+        return updatedApiData;
+      });
+
+    }
+    // else {
+    //   // Handle fields in other tabs
+    //   setApiData((prevApiData) => {
+    //     const updatedApiData = { ...prevApiData };
+
+    //     // Your logic to update other fields in the apiData object
+    //     updatedApiData[tabName][name] = inputValue;
+
+    //     return updatedApiData;
+    //   });
+    // }
+  };
+
+
+  async function updateData(data) {
+    try {
+      //const newData = { /* Your updated data object here */ };
+
+      const response = await axios.put('https://netpolicyapi.azurewebsites.net/api/Policy/6548dd4a4d750ba8433cdafc', data);
+
+      if (response.status === 200) {
+        console.log('Data updated successfully');
+      } else {
+        console.log('Data update failed');
+      }
+    } catch (error) {
+      console.error('Error updating data:', error);
+    }
+  }
+
+
+
+
+  const handleSave = () => {
+    debugger
+    // Serialize formDataState to JSON
+    const formDataJSON = convertToJSON(apiData);
+
+    const { customFields, ...updatedFormDataJSON } = formDataJSON; // to remove customFields array
+    const updatedApiData = { ...updatedFormDataJSON };
+    updatedApiData.customFields = updatedFormDataJSON.fe_customFields; // Add a new property with the custom field values
+    const { fe_customFields, ...updatedFormJSON } = updatedApiData;  // to remove fe_customFields
+    console.log(updatedFormJSON);
+    // Assuming formDataJSON is an array of objects
+    //const updatedData = formDataJSON.policyTab.id = "6548dd4a4d750ba8433cdafc"
+    updateData(updatedFormJSON)
+
+    // You can also add validation logic before saving if needed
+    // ...
+  };
+
+
+  const convertToJSON = (formDataState) => {
+    debugger
+    const formDataJSON = {};
+    for (const key in formDataState) {
+      formDataJSON[key] = formDataState[key];
+    }
+    return formDataJSON;
+  };
 
   return (
 
     <>
 
-<div className="main-hd my-4">
+      <div className="main-hd my-4">
         <div className="pagetitle">
           <h1>Policy : 3212</h1>
         </div>
@@ -901,7 +1259,39 @@ const Detail = (props) => {
                                       </div>
                                     </span>
                                   </div>
-                                  
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra1__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra1')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra1__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra2__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra2')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra2__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+
                                 </div>
 
                                 <div className="col-sm-12 col-md-4 col-lg-4 ">
@@ -921,6 +1311,38 @@ const Detail = (props) => {
                                       </div>
                                     </span>
                                   </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra3__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra3')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra3__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra4__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra4')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra4__error')}
+                                      </div>
+                                    </span>
+                                  </div>
                                 </div>
 
                                 <div className="col-sm-12 col-md-4 col-lg-4 ">
@@ -937,6 +1359,38 @@ const Detail = (props) => {
                                     <span>
                                       <div id='div_extended_family_name__error'>
                                         {renderPolicyTabContent('div_extended_family_name__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra5__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra5')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra5__error')}
+                                      </div>
+                                    </span>
+                                  </div>
+                                  <div className="detail_item">
+                                    <div className="detail_title">
+                                      <div id='div_abc_code__label'>
+                                        {renderPolicyTabContent('div_extra6__label')}
+                                      </div>
+                                      <span class="mendatory-field"></span>
+                                    </div>
+                                    <div id='div_abc_code'>
+                                      {renderPolicyTabContent('div_extra6')}
+                                    </div>
+                                    <span>
+                                      <div id='div_abc_code__error'>
+                                        {renderPolicyTabContent('div_extra6__error')}
                                       </div>
                                     </span>
                                   </div>
