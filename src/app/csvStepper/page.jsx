@@ -7,7 +7,6 @@ import CsvImporter from './csvImporter';
 import CsvPage from './csvMapper';
 import CsvDownload from './csvDownload';
 
-
 export default function Page() {
   const [currentStep, setCurrentStep] = useState(0); // Use a numeric index for the current step
   const [importedData, setImportedData] = useState(null);
@@ -90,20 +89,38 @@ export default function Page() {
             )}
           </div>
           <div className={styles["button-container"]}>
-            <button className={styles["button"]}
-              variant="secondary"
-              disabled={currentStep === 0}
-              onClick={handlePrevious}
-            >
-              Previous
-            </button>
-            <button className={styles["button"]}
-              variant="primary"
-              disabled={currentStep === 2}
-              onClick={handleNext}
-            >
-              Next
-            </button>
+            {currentStep === 0 && (
+              <button className={styles["button"]}
+                variant="primary"
+                onClick={handleNext}
+              >
+                Next
+              </button>
+            )}
+            {currentStep === 1 && (
+              <>
+                <button className={styles["button"]}
+                  variant="secondary"
+                  onClick={handlePrevious}
+                >
+                  Previous
+                </button>
+                <button className={styles["button"]}
+                  variant="primary"
+                  onClick={handleNext}
+                >
+                  Next
+                </button>
+              </>
+            )}
+            {currentStep === 2 && (
+              <button className={styles["button"]}
+                variant="secondary"
+                onClick={handlePrevious}
+              >
+                Previous
+              </button>
+            )}
           </div>
         </Col>
       </Row>
@@ -111,6 +128,3 @@ export default function Page() {
     </>
   );
 }
-
-
-
