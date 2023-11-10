@@ -1,12 +1,14 @@
 .wrapper {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+ 
 }
 
 .table-container {
   border-collapse: collapse;
   border: 1px solid #ccc;
   width: 100%;
+  
 }
 
 .table-container th, .table-container td {
@@ -14,6 +16,7 @@
   border-right: none; /* Remove vertical border lines */
   padding: 8px;
   text-align: center;
+  /* width: 50%; */
 }
 
 .table-container th {

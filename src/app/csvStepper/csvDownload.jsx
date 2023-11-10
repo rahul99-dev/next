@@ -48,8 +48,8 @@ function CsvDownload({ downloadData }) {
     return (
         <>
             <div>
-                <h2>download</h2>
-                <button onClick={handleDownloadCSV}>Download CSV</button>
+                
+                <button className='dwn-btn' onClick={handleDownloadCSV}><i class="bi bi-download"></i>Download CSV</button>
             </div>
         </>
     )

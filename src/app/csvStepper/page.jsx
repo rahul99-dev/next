@@ -58,7 +58,7 @@ export default function Page() {
   return (
     <>
       <div className="pagetitle">
-        <h1>Dashboard</h1>
+        <h1>CSV Mapping</h1>
         <nav>
           <ol className="breadcrumb">
             <li className="breadcrumb-item"><a href="/">Home</a></li>
@@ -68,12 +68,12 @@ export default function Page() {
       </div>
       <Container>
         <Row>
-          <Col md={12}>
+          <Col md={8}>
             <Stepper
               steps={steps}
               activeStep={currentStep}
             />
-            <hr />
+            <hr className='hr'/>
             <div className="step-content">
               {currentStep === 0 && (
                 <>
